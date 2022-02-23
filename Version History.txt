@@ -1,0 +1,2 @@
+V1.2 Full fledged gomoku game rules.
+V1.3 Restrictions on second move lifted.
