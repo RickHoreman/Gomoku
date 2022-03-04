@@ -163,8 +163,9 @@ def pretty_board(board: Board):
     Function to print the board to the standard out
     :param board: a d by d list representing the board, 0 being empty, 1 black stone, and 2 a white stone
     """
-    for row in board:
-        for val in row:
+    for rownr, row in enumerate(board):
+        print(f"{rownr:2}", end=' ')
+        for valnr, val in enumerate(row):
             if(val == 0):
                 print('- ', end='')
             elif(val == 1):
