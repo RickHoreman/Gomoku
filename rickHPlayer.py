@@ -2,7 +2,7 @@ import random
 from gomoku import Move, GameState, pretty_board as printBoard
 from GmUtils import GmUtils, basePlayer
 from time import time
-from node import Node
+from node import Node, stats
 
 # This default base player does a randomn move
 class rickHPlayer(basePlayer):
@@ -52,6 +52,7 @@ class rickHPlayer(basePlayer):
                 self.nRoot = Node(state, last_move, debug=debug)
             self.nRoot.parent = None
         count=0
+        rootRef = self.nRoot
         while time()*1000-startTimeMS < max_time_to_move * 0.90:
             count+=1
             #print(f"count: {count}")
@@ -60,7 +61,12 @@ class rickHPlayer(basePlayer):
             #print(f"nLeaf.Q: {nLeaf.Q}")
             val = nLeaf.rollout(self.black)
             nLeaf.backupValue(val)
+        stats[0].append(len(self.nRoot.children))
+        stats[1].append(self.nRoot.N)
+        stats[2].append(self.nRoot.Q)
         print(f"count: {count}")
+        print(f"Same root: {rootRef == self.nRoot}")
+        print(f"len(nRoot.children): {len(self.nRoot.children)}")
         bestChild = self.nRoot.bestChild()
         print(f"best child's move: {bestChild.lastMove}")
         print(f"best child: {bestChild}")

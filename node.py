@@ -2,9 +2,12 @@ from GmUtils import GmUtils
 from gomoku import move as play, Move, GameState, check_win, pretty_board as printBoard, valid_moves as getValidMoves
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 from copy import deepcopy
 random.seed(0)
 c = 1 / np.sqrt(2)
+
+stats = [[], [], []]
 
 class Node:
     def __init__(self, state: GameState, lastMove: Move, parent=None, debug=None):
@@ -28,12 +31,12 @@ class Node:
         #printBoard(self.state[0])
         #moves = getValidMoves(self.state)
         if(self.isTerminal()):
-            #print("isTerminal")
+            print("isTerminal")
             self.debug[0] += 1
             return self
         #print(len(self.movesToExplore))
         #print(len(self.children))
-        if(len(self.movesToExplore) > len(self.children)):
+        if(len(self.movesToExplore) > 0):
             #print("que")
             self.debug[1] += 1
             moveIndex = random.randrange(0, len(self.movesToExplore))
@@ -54,7 +57,7 @@ class Node:
             #print(len(self.movesToExplore))
             return self.children[-1]
         if(len(self.movesToExplore) == 0):
-            print("Leaf node!")
+            #print("Leaf node!")
             self.debug[2] += 1
             return self
         return self.highestUCTChild().findSpotToExpand()
@@ -106,14 +109,21 @@ class Node:
             print(self.N)
             print(self.Q)
             print(self.movesToExplore)
-        best = (-1, None)
+            plt.plot(range(len(stats[0])), stats[0], linewidth=1, color='blue', label='len(nRoot.children)')
+            plt.plot(range(len(stats[1])), stats[1], linewidth=1, color='red', label='nRoot.N')
+            plt.plot(range(len(stats[2])), stats[2], linewidth=1, color='green', label='nRoot.Q')
+            plt.legend()
+            plt.show()
+            #self.findSpotToExpand()
+        best = (-float('inf'), None)
         #print("children's values:")
         for child in self.children:
-            val = child.Q / child.N
+            #val = child.Q / child.N
+            val = child.getUCT()
             #print(val)
-            if((val > best[0]) and len(child.children) > 0):
+            if((val > best[0])): #and len(child.children) > 0):
                 best = (val, child)
-            print(child.lastMove, end=', ')
+            #print(child.lastMove, end=', ')
         # print(f"best child's children: {best[1].children}")
         print(f"\n{self.debug[0]} terminal, {self.debug[1]} que, {self.debug[2]} leaf, {self.debug[3]} not yabe, {self.debug[4]} yabe")
         return best[1]

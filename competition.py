@@ -100,10 +100,12 @@ player1 = gomoku_ai_marius1_webclient()
 player2 = gomoku_ai_random_webclient()
 
 comp = competition(bsize_=19)
-comp.register_player(player1)
+#comp.register_player(player1)
 from rickHPlayer import rickHPlayer as rick
 comp.register_player(rick())
 comp.register_player(player0)
+comp.register_player(random_dummy_player())
+comp.register_player(random_dummy_player())
 
 nofCompetitions=1
 for i in range(nofCompetitions):
