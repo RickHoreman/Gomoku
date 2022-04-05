@@ -48,6 +48,9 @@ def valid_moves(state : GameState) -> List[Move]:
 
 
 def check_win(board: Board, last_move: Move) -> bool:
+    if last_move==None or last_move==():
+        return False
+    
     """This method checks whether the last move played wins the game.
     The rule for winning is: /exactly/ 5 stones line up (so not 6 or more),
     horizontally, vertically, or diagonally."""
@@ -163,9 +166,8 @@ def pretty_board(board: Board):
     Function to print the board to the standard out
     :param board: a d by d list representing the board, 0 being empty, 1 black stone, and 2 a white stone
     """
-    for rownr, row in enumerate(board):
-        print(f"{rownr:2}", end=' ')
-        for valnr, val in enumerate(row):
+    for row in board:
+        for val in row:
             if(val == 0):
                 print('- ', end='')
             elif(val == 1):

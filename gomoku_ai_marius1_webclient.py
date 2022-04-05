@@ -51,6 +51,8 @@ class gomoku_ai_marius1_webclient():
     def convertToIntTuple(self,tup):
         if(tup==None or tup==()):
             return None
+        else:
+            return tup
     
     def convertToList(self,board):
         if type(board) == type([]):

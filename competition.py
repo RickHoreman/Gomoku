@@ -7,6 +7,8 @@ from gomoku_ai_random_webclient import gomoku_ai_random_webclient
 import random
 import time
 
+from Twan import Twan
+
 class competition:
     """This class runs the competition between the submitted players.
     A player needs to have the new_game(black) and move(board, prev_move, valid_moves_list)
@@ -98,14 +100,11 @@ game = gomoku.starting_state()
 player0 = random_dummy_player()
 player1 = gomoku_ai_marius1_webclient()
 player2 = gomoku_ai_random_webclient()
+player3 = Twan()
 
-comp = competition(bsize_=19)
-#comp.register_player(player1)
-from rickHPlayer import rickHPlayer as rick
-comp.register_player(rick())
-comp.register_player(player0)
-comp.register_player(random_dummy_player())
-comp.register_player(random_dummy_player())
+comp = competition()
+comp.register_player(player1)
+comp.register_player(player3)
 
 nofCompetitions=1
 for i in range(nofCompetitions):

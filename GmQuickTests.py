@@ -66,20 +66,34 @@ class GmQuickTests:
             print ("Invalid GameRules: board must be 7x7, winningseries must be 5 for this test")
         return bValidGameRules
     
-    def testMove(aiPlayer,testTitle,gamestate, last_move, lstGoodMoves):
+    def testMove(aiPlayer,testTitle,gamestate, last_move, lstGoodMoves, bToggleColors):
+        bIamBlack = ((gamestate[1] % 2)==1)
+        if bToggleColors:
+            bIamBlack = not bIamBlack
+            gamestate = (gamestate[0],gamestate[1]+1)
+            for row in gamestate[0]:
+                for nCol in range(len(row)):
+                    if row[nCol]==1:
+                        row[nCol]=2
+                    elif row[nCol]==2:
+                        row[nCol]=1
+        if bIamBlack:
+            testTitle += "_as black player"
+        else:
+            testTitle += "_as white player"
+        
         print(testTitle);
         if(not GmQuickTests.validateGameRules()): return
-        if(not aiPlayer.black):
-            print("For these tests, the AI player should be black")
-            return;
+        
+        aiPlayer.new_game(bIamBlack)
             
         # Note: an odd ply means that it's blacks/x/color1 turn, while even play means that white/O/color2 needs to make a move.
         max_time_to_move = 1000; # ms
         
         if(gamestate[1]%2 == 1):
-            color = 1
-        else:
             color = 2
+        else:
+            color = 1
     
         last_move = (row,col) = aiPlayer.move(gamestate, last_move, max_time_to_move)
         
@@ -93,19 +107,7 @@ class GmQuickTests:
         print(last_move)
         print("-----------------")
     
-    def testWinSelf1(aiPlayer):
-        gamestate = \
-             (np.array([[0, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0]]), 5)
-        
-        GmQuickTests.testMove(aiPlayer, "testWinSelf1", gamestate, (3,0), [(2,0)])
-        
-    def testPreventWinOther1(aiPlayer):
+    def testWinSelf1(aiPlayer, bToggleColors=False):
         gamestate = \
              (np.array([[0, 0, 0, 0, 0, 0, 0],\
                         [0, 0, 0, 0, 0, 0, 0],\
@@ -115,63 +117,87 @@ class GmQuickTests:
                         [2, 0, 0, 0, 0, 0, 0],\
                         [2, 0, 0, 0, 0, 0, 0]]), 5)
         
-        GmQuickTests.testMove(aiPlayer, "testPreventWinOther1", gamestate, (3,0), [(2,0)])
-
-    def testWinSelf2(aiPlayer):
-        gamestate = \
-             (np.array([[0, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0]]), 5)
-                 
-        GmQuickTests.testMove(aiPlayer, "testWinSelf2", gamestate, (2,0), [(1,0),(6,0)])
-    
-    def testPreventWinOther2(aiPlayer):
-        gamestate = \
-             (np.array([[0, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0],\
-                        [2, 0, 0, 0, 0, 0, 0],\
-                        [2, 0, 0, 0, 0, 0, 0],\
-                        [2, 0, 0, 0, 0, 0, 0],\
-                        [2, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0]]), 5)
-                 
-        GmQuickTests.testMove(aiPlayer, "testPreventWinOther2", gamestate, (2,0), [(1,0),(6,0)])
-    
-    def testWinSelf3(aiPlayer):
-        gamestate = \
-             (np.array([[0, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0],\
-                        [0, 0, 0, 0, 0, 0, 0],\
-                        [1, 0, 0, 0, 0, 0, 2],\
-                        [1, 0, 0, 0, 0, 0, 2],\
-                        [1, 0, 0, 0, 0, 0, 2],\
-                        [1, 0, 0, 0, 0, 0, 2]]), 9)
-                 
-        GmQuickTests.testMove(aiPlayer, "testWinSelf3", gamestate, (3,6), [(2,0)])
+        GmQuickTests.testMove(aiPlayer, "testWinSelf1", gamestate, (3,0), [(2,0)], bToggleColors)
         
-    def testPreventAdvanced1(aiPlayer):
+    def testPreventWinOther1(aiPlayer, bToggleColors=False):
+        gamestate = \
+             (np.array([[0, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0]]), 5)
+        
+        GmQuickTests.testMove(aiPlayer, "testPreventWinOther1", gamestate, (3,0), [(2,0)], bToggleColors)
+
+    def testWinSelf2(aiPlayer, bToggleColors=False):
+        gamestate = \
+             (np.array([[0, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0],\
+                        [2, 0, 0, 0, 0, 0, 0],\
+                        [2, 0, 0, 0, 0, 0, 0],\
+                        [2, 0, 0, 0, 0, 0, 0],\
+                        [2, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0]]), 5)
+                 
+        GmQuickTests.testMove(aiPlayer, "testWinSelf2", gamestate, (2,0), [(1,0),(6,0)], bToggleColors)
+    
+    def testPreventWinOther2(aiPlayer, bToggleColors=False):
+        gamestate = \
+             (np.array([[0, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0],\
+                        [1, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0]]), 5)
+                 
+        GmQuickTests.testMove(aiPlayer, "testPreventWinOther2", gamestate, (2,0), [(1,0),(6,0)], bToggleColors)
+    
+    def testWinSelf3(aiPlayer, bToggleColors=False):
+        gamestate = \
+             (np.array([[0, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0],\
+                        [0, 0, 0, 0, 0, 0, 0],\
+                        [2, 0, 0, 0, 0, 0, 1],\
+                        [2, 0, 0, 0, 0, 0, 1],\
+                        [2, 0, 0, 0, 0, 0, 1],\
+                        [2, 0, 0, 0, 0, 0, 1]]), 9)
+                 
+        GmQuickTests.testMove(aiPlayer, "testWinSelf3", gamestate, (3,6), [(2,0)], bToggleColors)
+        
+    def testPreventAdvanced1(aiPlayer, bToggleColors=False):
             gamestate = \
                  (np.array([[0, 0, 0, 0, 0, 0, 0],\
                             [0, 0, 0, 0, 0, 0, 0],\
-                            [2, 0, 0, 0, 0, 0, 0],\
-                            [2, 0, 0, 0, 0, 0, 0],\
-                            [2, 0, 0, 0, 0, 0, 0],\
+                            [1, 0, 0, 0, 0, 0, 0],\
+                            [1, 0, 0, 0, 0, 0, 0],\
+                            [1, 0, 0, 0, 0, 0, 0],\
                             [0, 0, 0, 0, 0, 0, 0],\
                             [0, 0, 0, 0, 0, 0, 2]]), 5)
                      
-            GmQuickTests.testMove(aiPlayer, "testAdvanced1", gamestate, (2,0), [(1,0),(5,0)])
+            GmQuickTests.testMove(aiPlayer, "testAdvanced1", gamestate, (2,0), [(1,0),(5,0)], bToggleColors)
         
     def doAllTests(aiPlayer):
+        print("*****************************************")
+        print("* Tests with AI playing black *")
+        print("*****************************************")
         GmQuickTests.testWinSelf1(aiPlayer)
         GmQuickTests.testPreventWinOther1(aiPlayer)
         GmQuickTests.testWinSelf2(aiPlayer)
         GmQuickTests.testPreventWinOther2(aiPlayer)
         GmQuickTests.testWinSelf3(aiPlayer)
         GmQuickTests.testPreventAdvanced1(aiPlayer)
+        print("*****************************************")
+        print("* Same tests, but with AI playing white *")
+        print("*****************************************")
+        GmQuickTests.testWinSelf1(aiPlayer, True)
+        GmQuickTests.testPreventWinOther1(aiPlayer, True)
+        GmQuickTests.testWinSelf2(aiPlayer, True)
+        GmQuickTests.testPreventWinOther2(aiPlayer, True)
+        GmQuickTests.testWinSelf3(aiPlayer, True)
+        GmQuickTests.testPreventAdvanced1(aiPlayer, True)
         
         
         

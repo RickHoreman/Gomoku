@@ -84,7 +84,7 @@ class GmGame():
             GmGame.runGame(player1,player2,max_time_to_move,showIntermediateMoves)
     
     def runGame(player1, player2, max_time_to_move, showIntermediateMoves,):
-        last_move = None
+        last_move = () # was None, changed for compatibility with competition.py
         ply=1        
         
         # black goes first
