@@ -4,7 +4,6 @@ from GmUtils import GmUtils, basePlayer
 from time import time
 from node import Node
 
-# This default base player does a randomn move
 class rickHPlayer(basePlayer):
     """This class specifies a player that just does random moves.
     The use of this class is two-fold: 1) You can use it as a base random roll-out policy.
@@ -33,8 +32,6 @@ class rickHPlayer(basePlayer):
         4) the maximum time until the agent is required to make a move in milliseconds [diverging from this will lead to disqualification].
         """
         startTimeMS = time()*1000
-        if(last_move == () and self.black):
-            return (len(state[0])//2,len(state[0])//2)
         if(self.nRoot == None):
             self.nRoot = Node(state, last_move)
         else:
@@ -44,8 +41,9 @@ class rickHPlayer(basePlayer):
             self.nRoot.parent = None
         while time()*1000-startTimeMS < max_time_to_move * 0.90:
             nLeaf = self.nRoot.findSpotToExpand()
-            val = nLeaf.rollout(self.black)
-            nLeaf.backupValue(val)
+            for _ in range(10):
+                val = nLeaf.rollout(self.black)
+                nLeaf.backupValue(val)
         bestChild = self.nRoot.bestChild()
         self.nRoot = bestChild
         self.nRoot.parent = None

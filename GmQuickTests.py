@@ -198,6 +198,7 @@ class GmQuickTests:
         GmQuickTests.testPreventWinOther2(aiPlayer, True)
         GmQuickTests.testWinSelf3(aiPlayer, True)
         GmQuickTests.testPreventAdvanced1(aiPlayer, True)
-        
-        
+
+from rickHPlayer import rickHPlayer
+GmQuickTests.doAllTests(rickHPlayer())
         
